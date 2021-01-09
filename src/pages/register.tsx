@@ -1,12 +1,13 @@
-import React from 'react'
-import {Form, Formik} from 'formik'
-import { Box, Button, FormControl, FormErrorMessage, FormLabel, Input } from '@chakra-ui/react';
-import Wrapper from '../components/Wrapper';
-import { InputField } from '../components/InputField';
-import { useMutation } from 'urql';
-import { useRegisterMutation } from '../generated/graphql';
-import { toErrorMap } from '../utils/toErrorMap';
+import { Box, Button } from '@chakra-ui/react';
+import { Form, Formik } from 'formik';
+import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
+import React from 'react';
+import { InputField } from '../components/InputField';
+import Wrapper from '../components/Wrapper';
+import { useRegisterMutation } from '../generated/graphql';
+import { createUrqlClient } from '../utils/createUrqlClient';
+import { toErrorMap } from '../utils/toErrorMap';
 
 interface registerProps {}
 
@@ -16,10 +17,10 @@ const Register: React.FC<registerProps> = ({}) => {
     return (
         <Wrapper variant='small'>
             <Formik
-                initialValues={{username:'', password: ''}}
+                initialValues={{username:'', email:'', password: ''}}
                 onSubmit={async (values, { setErrors })=>{
                     console.log(values);
-                    const res = await register(values);
+                    const res = await register({options: values});
                     if(res.data?.register.errors) {
                         setErrors( toErrorMap(res.data.register.errors) );
                     }
@@ -32,6 +33,9 @@ const Register: React.FC<registerProps> = ({}) => {
                     <Form>
                         <InputField name='username' placeholder='username' label='Username'/>
                         <Box mt={4}>
+                            <InputField name='email' placeholder='email' label='Email'/>
+                        </Box>
+                        <Box mt={4}>
                             <InputField name='password' placeholder='password' label='Password' type='password'/>
                         </Box>
                         <Button mt={4} type="submit" colorScheme='teal' isLoading={isSubmitting}>Register</Button>
@@ -42,4 +46,4 @@ const Register: React.FC<registerProps> = ({}) => {
     );
 }
 
-export default Register;
+export default withUrqlClient(createUrqlClient)(Register);

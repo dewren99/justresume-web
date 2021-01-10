@@ -1,41 +1,69 @@
 import { extendTheme } from '@chakra-ui/react'
 import { createBreakpoints } from '@chakra-ui/theme-tools'
 
-const fonts = { mono: `'Menlo', monospace` }
+// const fonts = { 
+//   mono: `'Menlo', monospace` 
+// }
+
+const colors = {
+  black: '#333333',
+  white: '#ffffff',
+}
+
+const fontSizes = {
+  xs: "12px",
+  sm: "14px",
+  md: "16px",
+  lg: "18px",
+  xl: "20px",
+  "2xl": "24px",
+  "3xl": "28px",
+  "4xl": "36px",
+  "5xl": "48px",
+  "6xl": "64px",
+  "7xl": "100px",
+  "8xl": "164px",
+}
+
+const fontWeights = {
+  normal: 400,
+  medium: 500,
+  bold: 700,
+}
+
+const lineHeights = {
+  normal: "normal",
+  none: "1",
+  shorter: "1.25",
+  short: "1.375",
+  base: "1.5",
+  tall: "1.625",
+  taller: "2",
+}
+
+const letterSpacings = {
+  tighter: "-0.05em",
+  tight: "-0.025em",
+  normal: "0",
+  wide: "0.025em",
+  wider: "0.05em",
+  widest: "0.1em",
+}
 
 const breakpoints = createBreakpoints({
   sm: '40em',
   md: '52em',
   lg: '64em',
   xl: '80em',
-})
+});
 
 const theme = extendTheme({
-  colors: {
-    black: '#16161D',
-  },
-  fonts,
+  colors,
+  fontSizes,
+  fontWeights,
+  lineHeights,
+  letterSpacings,
   breakpoints,
-  icons: {
-    logo: {
-      path: (
-        <svg
-          width="3000"
-          height="3163"
-          viewBox="0 0 3000 3163"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <rect width="3000" height="3162.95" fill="none" />
-          <path
-            d="M1470.89 1448.81L2170 2488.19H820V706.392H2170L1470.89 1448.81ZM1408.21 1515.37L909.196 2045.3V2393.46H1998.84L1408.21 1515.37Z"
-            fill="currentColor"
-          />
-        </svg>
-      ),
-      viewBox: '0 0 3000 3163',
-    },
-  },
-})
+});
 
-export default theme
+export default theme;

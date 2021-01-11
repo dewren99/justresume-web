@@ -14,7 +14,7 @@ export const Layout: React.FC<LayoutProps> = ({
     return (
         <Wrapper>
             <NavBar/>
-            {showNavbarMargin? <Flex h={'4.5em'} maxH={'4.5em'} w={'100%'}/> : null}
+            {showNavbarMargin? <Flex h={'4.5em'} maxH={'4.5em'} padding='1em' w={'100%'}/> : null}
             {children}
         </Wrapper>
     );

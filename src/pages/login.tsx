@@ -31,7 +31,7 @@ const Login: React.FC<loginProps> = ({}) => {
                                 router.push(router.query.next);
                             }
                             else{
-                                router.push('/profile');
+                                router.push('/profile/');
                             }
                         }
                     }}

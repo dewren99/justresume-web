@@ -16,6 +16,8 @@ const NavBar: React.FC<NavBarProps> = () => {
     const [{data, fetching}] = useMeQuery({
         pause: isServer(),
     });
+
+    console.log(data);
     let body = null;
 
     if(fetching){
@@ -38,9 +40,11 @@ const NavBar: React.FC<NavBarProps> = () => {
     else{
         body = (
             <Flex alignItems='center'>
-                <Text mr={m}>{data.me.username}</Text>
+                <NextLink href='/profile/'>
+                    <Button variant='link'>{data.me.username}</Button>
+                </NextLink>
                 <NextLink href='/'>
-                    <Button ml={m} variant='ghost' onClick={()=>logout()} isLoading={logoutFetching}>Logout</Button>
+                    <Button position='relative' bottom='1px' ml={m} variant='ghost' onClick={()=>logout()} isLoading={logoutFetching}>Logout</Button>
                 </NextLink>
             </Flex>
         );

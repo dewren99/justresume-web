@@ -15,13 +15,14 @@ const Index = () => {
   return (
     <Layout>
       <Flex grow={1} alignItems='center' justify='center' direction='column'>
-        {/* <Flex> */}
           <Text fontSize={{ base: "5xl", sm: '6xl', md: "7xl", lg: "8xl" }} fontWeight='bold'>Just Resume</Text>
           <Flex>
             <Text fontSize={{ base: "2xl", sm: '3xl', md: "4xl", lg: "5xl" }} fontWeight='bold'>No 🐂</Text>
             <Text fontSize={{ base: "2xl", sm: '3xl', md: "4xl", lg: "5xl" }} fontWeight='bold'>, Just Resume </Text>
           </Flex>
-        {/* </Flex> */}
+      </Flex>
+      <Flex m={2}>
+        <Text fontSize={{base:'sm', sm:'sm', md:'md', lg:'md'}}>Passion Project by <Link href="http://www.denizevrendilek.com" isExternal>Deniz Evrendilek</Link></Text>
       </Flex>
     </Layout>
   );

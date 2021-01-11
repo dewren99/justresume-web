@@ -7,15 +7,15 @@ import { InputField } from '../components/InputField';
 import { Layout } from '../components/Layout';
 import { useCreatePostMutation } from '../generated/graphql';
 import { createUrqlClient } from '../utils/createUrqlClient';
-import useIsAuth from '../utils/useIsAuth';
+import userIsAuth from '../utils/userIsAuth';
 
 const CreatePost = ({}) => {
     const router = useRouter();
-    useIsAuth();
+    userIsAuth();
     const [, createPost] = useCreatePostMutation();
     
     return (
-        <Layout variant='small'>
+        <Layout>
             <Formik
                 initialValues={{title: '', text: ''}}
                 onSubmit={async (values)=>{

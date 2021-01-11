@@ -7,7 +7,7 @@ import { createBreakpoints } from '@chakra-ui/theme-tools'
 
 const colors = {
   black: '#333333',
-  white: '#ffffff',
+  white: '#fafafa',
 }
 
 const fontSizes = {

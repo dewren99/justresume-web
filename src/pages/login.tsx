@@ -47,7 +47,7 @@ const Login: React.FC<loginProps> = ({}) => {
                                     <NextLink href="/forgot-password">
                                         <Link>forgot password?</Link>
                                     </NextLink>
-                                    <Button ml={'auto'} type="submit" isLoading={isSubmitting}>Login</Button>
+                                    <Button ml={'auto'} type="submit" colorScheme='teal' isLoading={isSubmitting}>Login</Button>
                                 </Flex>
                             </Form>
                         </Box>

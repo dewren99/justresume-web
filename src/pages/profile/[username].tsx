@@ -7,27 +7,51 @@ import { Document, Page, pdfjs } from "react-pdf";
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
 import { SizeMe } from 'react-sizeme'; //https://github.com/wojtekmaj/react-pdf/issues/129
 import { Layout } from '../../components/Layout';
+import AboutMeArea from '../../components/profile/AboutMeArea';
+import NameArea from '../../components/profile/NameArea';
+import { largeHeaderSize, largeSubHeaderSize } from '../../constants';
 import { useGetUserQuery, useMeQuery } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
+import { isServer } from '../../utils/isServer';
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-
-const Profile: NextPage = ({}) => {
+const Profile: NextPage = () => {
     const router = useRouter();
     const [{data, fetching}, ] = useGetUserQuery({
-        pause: router.query.userId? false : true,
-        variables: {username: router.query.userId as string}
+        pause: router.query.username? false : true,
+        variables: { username: router.query.username as string }
     });
-    const [{data:meData, fetching:meFetching}] = useMeQuery();
+    const [{data:meData, fetching:meFetching}] = useMeQuery({
+        pause: isServer()
+    });
+    const [userIsOwner, setUserIsOwner] = useState<boolean>(false);
     const [pdfLoaded, setPdfLoaded] = useState(false);
     const loaded = data?.getUser && !fetching;
+    const loadedEmpty = !data?.getUser && !fetching;
 
     useEffect(()=>{
-        console.log(router);
-        console.log('fetching', fetching, meFetching);
-        console.log(data, meData);
-    }, [])
+        console.log(router.query.username);
+        console.log(meData);
+        if(!router.query.username && meData?.me){
+            router.replace(`/profile/${meData?.me?.username}`);
+        }
+        setUserIsOwner(router?.query?.username === meData?.me?.username);
+    }, [router.query.username, meData]);
     
+    if(loadedEmpty){
+        return(
+            <Layout>
+                <Flex flexGrow={1} flexDir="column" w={'100%'} maxW='1920px' mr={'auto'} ml={'auto'} justifyContent='center' alignItems='center' p={{base:4, sm:4}}>
+                    <Text fontWeight='bold' fontSize={largeHeaderSize}>
+                        Hol' Up ✋
+                    </Text>
+                    <Text fontWeight='bold' fontSize={largeSubHeaderSize}>
+                        {typeof router.query.username === 'string'? `Username "${router.query.username}" not found` : 'No user found'}
+                    </Text>
+                </Flex>
+            </Layout>
+        );
+    }
     return (
         <Layout showNavbarMargin>
             <Flex flexGrow={1} flexDir="row" wrap='wrap' overflow='auto' w={'100%'} maxW='1920px' mr={'auto'} ml={'auto'}>
@@ -40,11 +64,11 @@ const Profile: NextPage = ({}) => {
                                 <AvatarBadge boxSize="1em" bg="green.500" />
                             </Avatar>
                         </Box>
-
-                        <Heading as='h4' fontSize={{base:'md', sm:'lg', md:'2xl', lg:'4lx'}}  mt={8} maxW='300px'>Very Very Long User Name</Heading>
-                        <Text w={'inherit'} maxW='300px' h={'auto'} fontSize={{base:'sm', sm:'sm', md:'md', lg:'lg'}}>
-                            {loaded? data?.getUser.aboutMe : null}
-                        </Text>
+                        <NameArea value={loaded? `${data?.getUser?.firstName} ${data?.getUser?.lastName}` : ''} editable={userIsOwner}/>
+                        <AboutMeArea value={loaded? `${data?.getUser?.aboutMe}` : ''} editable={userIsOwner}/>
+                        {/* <Text w={'inherit'} maxW='300px' h={'auto'} fontSize={{base:'sm', sm:'sm', md:'md', lg:'lg'}}>
+                            {loaded? data?.getUser?.aboutMe : null}
+                        </Text> */}
                     </Skeleton>
 
                 </Flex>

@@ -1,0 +1,11 @@
+mutation SetFullName($text: String!){
+  setFullName(text: $text){
+    user{
+      id
+      username
+      updatedAt
+      firstName
+      lastName
+    }
+  }
+}

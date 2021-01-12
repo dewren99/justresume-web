@@ -29,11 +29,13 @@ export type QueryGetUserArgs = {
 export type User = {
   __typename?: 'User';
   id: Scalars['Float'];
+  username: Scalars['String'];
+  firstName?: Maybe<Scalars['String']>;
+  lastName?: Maybe<Scalars['String']>;
+  email: Scalars['String'];
+  aboutMe?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
-  username: Scalars['String'];
-  email: Scalars['String'];
-  aboutMe: Scalars['String'];
 };
 
 export type Mutation = {
@@ -41,6 +43,7 @@ export type Mutation = {
   forgotPassword: Scalars['Boolean'];
   changePassword: UserResponse;
   setAboutMe: UserResponse;
+  setFullName: UserResponse;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
@@ -63,8 +66,13 @@ export type MutationSetAboutMeArgs = {
 };
 
 
+export type MutationSetFullNameArgs = {
+  text: Scalars['String'];
+};
+
+
 export type MutationRegisterArgs = {
-  options: UsernamePasswordInput;
+  options: RegisterUserInput;
 };
 
 
@@ -85,8 +93,10 @@ export type FieldError = {
   message: Scalars['String'];
 };
 
-export type UsernamePasswordInput = {
+export type RegisterUserInput = {
   username: Scalars['String'];
+  firstName: Scalars['String'];
+  lastName: Scalars['String'];
   password: Scalars['String'];
   email: Scalars['String'];
 };
@@ -159,7 +169,7 @@ export type LogoutMutation = (
 );
 
 export type RegisterMutationVariables = Exact<{
-  options: UsernamePasswordInput;
+  options: RegisterUserInput;
 }>;
 
 
@@ -168,6 +178,38 @@ export type RegisterMutation = (
   & { register: (
     { __typename?: 'UserResponse' }
     & UserResponseFragmentFragment
+  ) }
+);
+
+export type SetAboutMeMutationVariables = Exact<{
+  text: Scalars['String'];
+}>;
+
+
+export type SetAboutMeMutation = (
+  { __typename?: 'Mutation' }
+  & { setAboutMe: (
+    { __typename?: 'UserResponse' }
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'updatedAt' | 'aboutMe'>
+    )> }
+  ) }
+);
+
+export type SetFullNameMutationVariables = Exact<{
+  text: Scalars['String'];
+}>;
+
+
+export type SetFullNameMutation = (
+  { __typename?: 'Mutation' }
+  & { setFullName: (
+    { __typename?: 'UserResponse' }
+    & { user?: Maybe<(
+      { __typename?: 'User' }
+      & Pick<User, 'id' | 'username' | 'updatedAt' | 'firstName' | 'lastName'>
+    )> }
   ) }
 );
 
@@ -180,7 +222,7 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'email' | 'aboutMe'>
+    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email' | 'aboutMe'>
   )> }
 );
 
@@ -260,7 +302,7 @@ export function useLogoutMutation() {
   return Urql.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument);
 };
 export const RegisterDocument = gql`
-    mutation Register($options: UsernamePasswordInput!) {
+    mutation Register($options: RegisterUserInput!) {
   register(options: $options) {
     ...UserResponseFragment
   }
@@ -270,11 +312,46 @@ export const RegisterDocument = gql`
 export function useRegisterMutation() {
   return Urql.useMutation<RegisterMutation, RegisterMutationVariables>(RegisterDocument);
 };
+export const SetAboutMeDocument = gql`
+    mutation SetAboutMe($text: String!) {
+  setAboutMe(text: $text) {
+    user {
+      id
+      username
+      updatedAt
+      aboutMe
+    }
+  }
+}
+    `;
+
+export function useSetAboutMeMutation() {
+  return Urql.useMutation<SetAboutMeMutation, SetAboutMeMutationVariables>(SetAboutMeDocument);
+};
+export const SetFullNameDocument = gql`
+    mutation SetFullName($text: String!) {
+  setFullName(text: $text) {
+    user {
+      id
+      username
+      updatedAt
+      firstName
+      lastName
+    }
+  }
+}
+    `;
+
+export function useSetFullNameMutation() {
+  return Urql.useMutation<SetFullNameMutation, SetFullNameMutationVariables>(SetFullNameDocument);
+};
 export const GetUserDocument = gql`
     query GetUser($username: String!) {
   getUser(username: $username) {
     id
     username
+    firstName
+    lastName
     email
     aboutMe
   }

@@ -1,3 +1,6 @@
-import Profile from "./profile/[userId]";
+import { withUrqlClient } from "next-urql";
+import { createUrqlClient } from "../utils/createUrqlClient";
+import Profile from "./profile/[username]";
 
-export default Profile;
+
+export default withUrqlClient(createUrqlClient, {ssr: true})(Profile); 

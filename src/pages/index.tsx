@@ -1,11 +1,8 @@
-import { Box, Button, Flex, Heading, Link, Stack, Text } from "@chakra-ui/react";
+import { Flex, Link, Text } from "@chakra-ui/react";
 import { withUrqlClient } from "next-urql";
-import NextLink from 'next/link';
-import React, { useState } from "react";
-import Emoji from "../components/Emoji";
+import React from "react";
 import { Layout } from "../components/Layout";
-import Wrapper from "../components/Wrapper";
-import { usePostsQuery } from "../generated/graphql";
+import { largeHeaderSize, largeSubHeaderSize } from "../constants";
 import { createUrqlClient } from "../utils/createUrqlClient";
 
 const Index = () => {
@@ -15,10 +12,10 @@ const Index = () => {
   return (
     <Layout>
       <Flex grow={1} alignItems='center' justify='center' direction='column'>
-          <Text fontSize={{ base: "5xl", sm: '6xl', md: "7xl", lg: "8xl" }} fontWeight='bold'>Just Resume</Text>
+          <Text fontSize={largeHeaderSize} fontWeight='bold'>Just Resume</Text>
           <Flex>
-            <Text fontSize={{ base: "2xl", sm: '3xl', md: "4xl", lg: "5xl" }} fontWeight='bold'>No 🐂</Text>
-            <Text fontSize={{ base: "2xl", sm: '3xl', md: "4xl", lg: "5xl" }} fontWeight='bold'>, Just Resume </Text>
+            <Text fontSize={largeSubHeaderSize} fontWeight='bold'>No 🐂</Text>
+            <Text fontSize={largeSubHeaderSize} fontWeight='bold'>, Just Resume </Text>
           </Flex>
       </Flex>
       <Flex m={2}>

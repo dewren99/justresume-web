@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
+import { Button, Flex, Heading, Link } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import React from 'react';
 import { useLogoutMutation, useMeQuery } from '../generated/graphql';
@@ -17,7 +17,6 @@ const NavBar: React.FC<NavBarProps> = () => {
         pause: isServer(),
     });
 
-    console.log(data);
     let body = null;
 
     if(fetching){

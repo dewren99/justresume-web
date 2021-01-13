@@ -1,15 +1,15 @@
-import { AspectRatio, Avatar, AvatarBadge, Box, Flex, Heading, Image, Skeleton, Text } from '@chakra-ui/react';
+import { Avatar, AvatarBadge, Box, Flex, Image, Skeleton } from '@chakra-ui/react';
 import { NextPage } from 'next';
 import { withUrqlClient } from 'next-urql';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { Document, Page, pdfjs } from "react-pdf";
+import { pdfjs } from "react-pdf";
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
-import { SizeMe } from 'react-sizeme'; //https://github.com/wojtekmaj/react-pdf/issues/129
 import { Layout } from '../../components/Layout';
 import AboutMeArea from '../../components/profile/AboutMeArea';
 import NameArea from '../../components/profile/NameArea';
-import { largeHeaderSize, largeSubHeaderSize } from '../../constants';
+import PdfViewArea from '../../components/profile/PdfViewArea';
+import UserNotFound from '../../components/profile/UserNotFound';
 import { useGetUserQuery, useMeQuery } from '../../generated/graphql';
 import { createUrqlClient } from '../../utils/createUrqlClient';
 import { isServer } from '../../utils/isServer';
@@ -25,9 +25,10 @@ const Profile: NextPage = () => {
         pause: isServer()
     });
     const [userIsOwner, setUserIsOwner] = useState<boolean>(false);
-    const [pdfLoaded, setPdfLoaded] = useState(false);
+
     const loaded = data?.getUser && !fetching;
     const loadedEmpty = !data?.getUser && !fetching;
+
 
     useEffect(()=>{
         console.log(router.query.username);
@@ -40,16 +41,7 @@ const Profile: NextPage = () => {
     
     if(loadedEmpty){
         return(
-            <Layout>
-                <Flex flexGrow={1} flexDir="column" w={'100%'} maxW='1920px' mr={'auto'} ml={'auto'} justifyContent='center' alignItems='center' p={{base:4, sm:4}}>
-                    <Text fontWeight='bold' fontSize={largeHeaderSize}>
-                        Hol' Up ✋
-                    </Text>
-                    <Text fontWeight='bold' fontSize={largeSubHeaderSize}>
-                        {typeof router.query.username === 'string'? `Username "${router.query.username}" not found` : 'No user found'}
-                    </Text>
-                </Flex>
-            </Layout>
+            <UserNotFound username={router.query.username as string}/>
         );
     }
     return (
@@ -66,29 +58,11 @@ const Profile: NextPage = () => {
                         </Box>
                         <NameArea value={loaded? `${data?.getUser?.firstName} ${data?.getUser?.lastName}` : ''} editable={userIsOwner}/>
                         <AboutMeArea value={loaded? `${data?.getUser?.aboutMe}` : ''} editable={userIsOwner}/>
-                        {/* <Text w={'inherit'} maxW='300px' h={'auto'} fontSize={{base:'sm', sm:'sm', md:'md', lg:'lg'}}>
-                            {loaded? data?.getUser?.aboutMe : null}
-                        </Text> */}
                     </Skeleton>
 
                 </Flex>
                 <Flex flexGrow={1} alignItems='center' justifyContent='center' minW='sm' w='50%' p='2em' pt={'4.5em'}>
-                    <AspectRatio flex="1 1 auto" ratio={0.707} maxW='600px'>
-                        <>
-                            <SizeMe>
-                                {({ size }) => (
-                                    <Document
-                                        file="https://s3-ap-southeast-1.amazonaws.com/happay-local/HVP/BILL20198261213473719445688HP.pdf"
-                                        onLoadSuccess={(opt: any)=>{console.log(opt); setPdfLoaded(true);}}
-                                        onLoadError={(err:any)=> console.log(err)}
-                                    >
-                                        <Page pageNumber={1}  width={size.width ? size.width : 1}/>
-                                    </Document>
-                                )}
-                            </SizeMe>
-                            <Skeleton position='absolute' zIndex='23' display='flex' flex='1' isLoaded={pdfLoaded}/>
-                        </>
-                    </AspectRatio>
+                    <PdfViewArea link={"https://s3-ap-southeast-1.amazonaws.com/happay-local/HVP/BILL20198261213473719445688HP.pdf"}/>
                 </Flex>
             </Flex>
         </Layout>

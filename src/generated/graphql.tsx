@@ -12,18 +12,35 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
+  getResumeByUserId?: Maybe<Resume>;
   me?: Maybe<User>;
   getUser?: Maybe<User>;
 };
 
 
+export type QueryGetResumeByUserIdArgs = {
+  userId: Scalars['Float'];
+};
+
+
 export type QueryGetUserArgs = {
   username: Scalars['String'];
+};
+
+export type Resume = {
+  __typename?: 'Resume';
+  id: Scalars['Float'];
+  ownerId: Scalars['Float'];
+  link?: Maybe<Scalars['String']>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
 };
 
 export type User = {
@@ -40,6 +57,7 @@ export type User = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  uploadResume: Scalars['String'];
   forgotPassword: Scalars['Boolean'];
   changePassword: UserResponse;
   setAboutMe: UserResponse;
@@ -47,6 +65,11 @@ export type Mutation = {
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+};
+
+
+export type MutationUploadResumeArgs = {
+  resume: Scalars['Upload'];
 };
 
 
@@ -80,6 +103,7 @@ export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
 };
+
 
 export type UserResponse = {
   __typename?: 'UserResponse';
@@ -213,6 +237,29 @@ export type SetFullNameMutation = (
   ) }
 );
 
+export type UploadResumeMutationVariables = Exact<{
+  resume: Scalars['Upload'];
+}>;
+
+
+export type UploadResumeMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'uploadResume'>
+);
+
+export type GetResumeByUserIdQueryVariables = Exact<{
+  userId: Scalars['Float'];
+}>;
+
+
+export type GetResumeByUserIdQuery = (
+  { __typename?: 'Query' }
+  & { getResumeByUserId?: Maybe<(
+    { __typename?: 'Resume' }
+    & Pick<Resume, 'link'>
+  )> }
+);
+
 export type GetUserQueryVariables = Exact<{
   username: Scalars['String'];
 }>;
@@ -344,6 +391,26 @@ export const SetFullNameDocument = gql`
 
 export function useSetFullNameMutation() {
   return Urql.useMutation<SetFullNameMutation, SetFullNameMutationVariables>(SetFullNameDocument);
+};
+export const UploadResumeDocument = gql`
+    mutation UploadResume($resume: Upload!) {
+  uploadResume(resume: $resume)
+}
+    `;
+
+export function useUploadResumeMutation() {
+  return Urql.useMutation<UploadResumeMutation, UploadResumeMutationVariables>(UploadResumeDocument);
+};
+export const GetResumeByUserIdDocument = gql`
+    query GetResumeByUserId($userId: Float!) {
+  getResumeByUserId(userId: $userId) {
+    link
+  }
+}
+    `;
+
+export function useGetResumeByUserIdQuery(options: Omit<Urql.UseQueryArgs<GetResumeByUserIdQueryVariables>, 'query'> = {}) {
+  return Urql.useQuery<GetResumeByUserIdQuery>({ query: GetResumeByUserIdDocument, ...options });
 };
 export const GetUserDocument = gql`
     query GetUser($username: String!) {

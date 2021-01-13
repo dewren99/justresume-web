@@ -5,6 +5,7 @@ import { betterUpdateQuery } from "./betterUpdateQuery";
 import Router from 'next/router';
 import {pipe, tap} from 'wonka';
 import { isServer } from "./isServer";
+import { multipartFetchExchange } from "@urql/exchange-multipart-fetch";
 
 const errorExchange: Exchange = ({ forward }) => ops$ => {
   return pipe(
@@ -67,7 +68,7 @@ export const createUrqlClient = (ssrExchange: any, ctx: any) => {
       credentials: 'include' as const,
       headers: cookie? {cookie} : undefined,
     },
-    exchanges: [dedupExchange, cacheExchange(cacheUpdates), ssrExchange, errorExchange, fetchExchange],
+    exchanges: [dedupExchange, cacheExchange(cacheUpdates), ssrExchange, errorExchange, multipartFetchExchange],
   });
 }
 

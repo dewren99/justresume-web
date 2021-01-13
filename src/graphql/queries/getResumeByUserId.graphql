@@ -1,0 +1,5 @@
+query GetResumeByUserId($userId: Float!){
+    getResumeByUserId(userId: $userId){
+        link
+    }
+}

@@ -1,10 +1,7 @@
 mutation SetAboutMe($text: String!) {
   setAboutMe(text: $text){
-    user{
-      id
-      username
-      updatedAt
-      aboutMe
-    }
+    id
+    updatedAt
+    aboutMe
   }
 }

@@ -14,8 +14,6 @@ const NameArea: React.FC<NameAreaProps> = ({editable, value}) => {
         setLocalValue(value);
     }, [value]);
 
-    console.log(fetching, data);
-
     return (
         <Editable 
             value={localValue} 

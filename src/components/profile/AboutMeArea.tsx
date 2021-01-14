@@ -22,8 +22,6 @@ const AboutMeArea: React.FC<AboutMeAreaProps> = ({editable, value}) => {
         }
     }, [data, fetching]);
 
-    console.log(fetching, data);
-
     return (
         <Editable 
             w='inherit'

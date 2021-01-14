@@ -5,6 +5,13 @@ query GetUser($username: String!){
     firstName
     lastName
     email
-    aboutMe
+    resume {
+      id
+      link
+    }
+    profile{
+      id
+      aboutMe
+    }
   }
 }

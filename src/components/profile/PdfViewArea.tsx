@@ -1,16 +1,19 @@
 import { EditIcon } from '@chakra-ui/icons';
-import { AspectRatio, Flex, IconButton, Skeleton } from '@chakra-ui/react';
+import { AspectRatio, Flex, IconButton, Skeleton, Text, useColorModeValue } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react'
 import { Document, Page } from 'react-pdf';
 import { SizeMe } from 'react-sizeme';
-import { useUploadResumeMutation } from '../../generated/graphql';
 
 interface PdfViewAreaProps {
-    link?: string | undefined
+    link?: string | undefined | null
+    onClick?: any
+    editable?: boolean | undefined | null
+    fetchingLink?: boolean | undefined | null
 }
 
-const PdfViewArea: React.FC<PdfViewAreaProps> = ({link}) => {
-    const [, uploadResume] = useUploadResumeMutation();
+const PdfViewArea: React.FC<PdfViewAreaProps> = ({link, onClick, editable, fetchingLink}) => {
+    const resumeBg = useColorModeValue("black", "white");
+    const infoText = useColorModeValue("white", "black");
     const [pdfLoaded, setPdfLoaded] = useState(false);
     let resumeOverlayRef = useRef<HTMLDivElement>(null);
     let inputFile = useRef<HTMLInputElement>(null); 
@@ -20,8 +23,8 @@ const PdfViewArea: React.FC<PdfViewAreaProps> = ({link}) => {
             flex="1 1 auto" 
             ratio={0.707} 
             maxW='600px' 
-            onMouseOver={()=>resumeOverlayRef.current? resumeOverlayRef.current.style.display = 'flex': null} 
-            onMouseOut={()=>resumeOverlayRef.current? resumeOverlayRef.current.style.display = 'none': null}
+            onMouseOver={()=>editable && resumeOverlayRef.current? resumeOverlayRef.current.style.display = 'flex': null} 
+            onMouseOut={()=> editable && resumeOverlayRef.current? resumeOverlayRef.current.style.display = 'none': null}
         >
             <>
                 <SizeMe>
@@ -35,15 +38,23 @@ const PdfViewArea: React.FC<PdfViewAreaProps> = ({link}) => {
                         </Document>
                     )}
                 </SizeMe>
-                <Flex display='none' ref={resumeOverlayRef} grow={1} opacity='0.8' bg='black' zIndex='2'>
+                {
+                editable && <Flex display='none' ref={resumeOverlayRef} grow={1} opacity='0.9' bg='black' zIndex='3'>
                     <IconButton aria-label='change resume pdf' icon={<EditIcon/>} onClick={()=>{inputFile?.current?.click();}}/>
                     <input type='file' ref={inputFile} style={{display:'none'}} onChange={({
                         target:{ 
                             files: [file]
                         }
-                        })=> {console.log(file); if(file) uploadResume({resume: file})}}/>
+                        })=> {console.log(file); if(file && editable) onClick({resume: file})}}/>
                 </Flex>
+                }
                 <Skeleton position='absolute' zIndex='1'  display='flex' flex='1' isLoaded={pdfLoaded}/>
+                {!link && !fetchingLink && 
+                <Flex grow={1} zIndex='2' bgColor={resumeBg}><Text textAlign='center' color={infoText} fontWeight='bold' opacity='0.5'>
+                    No Resume Uploaded<br/>
+                    {editable? '(Hover over here to upload one!)' : null}
+                    </Text>
+                </Flex>}
             </>
         </AspectRatio>
     );

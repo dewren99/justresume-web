@@ -22,6 +22,7 @@ export type Query = {
   getResumeByUserId?: Maybe<Resume>;
   me?: Maybe<User>;
   getUser?: Maybe<User>;
+  profile?: Maybe<Profile>;
 };
 
 
@@ -31,13 +32,17 @@ export type QueryGetResumeByUserIdArgs = {
 
 
 export type QueryGetUserArgs = {
-  username: Scalars['String'];
+  username?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryProfileArgs = {
+  userId: Scalars['Float'];
 };
 
 export type Resume = {
   __typename?: 'Resume';
   id: Scalars['Float'];
-  ownerId: Scalars['Float'];
   link?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
@@ -50,21 +55,33 @@ export type User = {
   firstName?: Maybe<Scalars['String']>;
   lastName?: Maybe<Scalars['String']>;
   email: Scalars['String'];
+  resume?: Maybe<Resume>;
+  profile?: Maybe<Profile>;
+  createdAt: Scalars['String'];
+  updatedAt: Scalars['String'];
+};
+
+export type Profile = {
+  __typename?: 'Profile';
+  id: Scalars['Float'];
   aboutMe?: Maybe<Scalars['String']>;
+  profileImageLink?: Maybe<Scalars['String']>;
+  backgroundImageLink?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
   updatedAt: Scalars['String'];
 };
 
 export type Mutation = {
   __typename?: 'Mutation';
-  uploadResume: Scalars['String'];
+  uploadResume: Resume;
   forgotPassword: Scalars['Boolean'];
   changePassword: UserResponse;
-  setAboutMe: UserResponse;
   setFullName: UserResponse;
   register: UserResponse;
   login: UserResponse;
   logout: Scalars['Boolean'];
+  setAboutMe: Profile;
+  setProfileImage: Profile;
 };
 
 
@@ -84,11 +101,6 @@ export type MutationChangePasswordArgs = {
 };
 
 
-export type MutationSetAboutMeArgs = {
-  text: Scalars['String'];
-};
-
-
 export type MutationSetFullNameArgs = {
   text: Scalars['String'];
 };
@@ -102,6 +114,16 @@ export type MutationRegisterArgs = {
 export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
+};
+
+
+export type MutationSetAboutMeArgs = {
+  text: Scalars['String'];
+};
+
+
+export type MutationSetProfileImageArgs = {
+  image: Scalars['Upload'];
 };
 
 
@@ -213,11 +235,8 @@ export type SetAboutMeMutationVariables = Exact<{
 export type SetAboutMeMutation = (
   { __typename?: 'Mutation' }
   & { setAboutMe: (
-    { __typename?: 'UserResponse' }
-    & { user?: Maybe<(
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username' | 'updatedAt' | 'aboutMe'>
-    )> }
+    { __typename?: 'Profile' }
+    & Pick<Profile, 'id' | 'updatedAt' | 'aboutMe'>
   ) }
 );
 
@@ -244,7 +263,10 @@ export type UploadResumeMutationVariables = Exact<{
 
 export type UploadResumeMutation = (
   { __typename?: 'Mutation' }
-  & Pick<Mutation, 'uploadResume'>
+  & { uploadResume: (
+    { __typename?: 'Resume' }
+    & Pick<Resume, 'link'>
+  ) }
 );
 
 export type GetResumeByUserIdQueryVariables = Exact<{
@@ -269,7 +291,14 @@ export type GetUserQuery = (
   { __typename?: 'Query' }
   & { getUser?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email' | 'aboutMe'>
+    & Pick<User, 'id' | 'username' | 'firstName' | 'lastName' | 'email'>
+    & { resume?: Maybe<(
+      { __typename?: 'Resume' }
+      & Pick<Resume, 'id' | 'link'>
+    )>, profile?: Maybe<(
+      { __typename?: 'Profile' }
+      & Pick<Profile, 'id' | 'aboutMe'>
+    )> }
   )> }
 );
 
@@ -362,12 +391,9 @@ export function useRegisterMutation() {
 export const SetAboutMeDocument = gql`
     mutation SetAboutMe($text: String!) {
   setAboutMe(text: $text) {
-    user {
-      id
-      username
-      updatedAt
-      aboutMe
-    }
+    id
+    updatedAt
+    aboutMe
   }
 }
     `;
@@ -394,7 +420,9 @@ export function useSetFullNameMutation() {
 };
 export const UploadResumeDocument = gql`
     mutation UploadResume($resume: Upload!) {
-  uploadResume(resume: $resume)
+  uploadResume(resume: $resume) {
+    link
+  }
 }
     `;
 
@@ -420,7 +448,14 @@ export const GetUserDocument = gql`
     firstName
     lastName
     email
-    aboutMe
+    resume {
+      id
+      link
+    }
+    profile {
+      id
+      aboutMe
+    }
   }
 }
     `;
